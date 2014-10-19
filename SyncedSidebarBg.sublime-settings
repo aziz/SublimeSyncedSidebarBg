@@ -3,6 +3,6 @@
   "side_bar_sep_line_brightness_change": 50,
   "label_color_light": [30, 30, 30],
   "label_color_dark": [220, 220, 220],
-  "ignored_syntaxes": ["VintageousEx Cmdline.tmLanguage", "TestConsole.tmLanguage"],
+  "ignored_syntaxes": ["VintageousEx Cmdline.tmLanguage", "TestConsole.tmLanguage", "RegExp.tmLanguage"],
   "ignored_themes": ["Widgets.stTheme"]
 }

@@ -4,25 +4,30 @@
 import sublime, sublime_plugin
 import codecs, json
 import plistlib
-from os import path
+import glob
+from os import path, remove
 
 class SidebarMatchColorScheme(sublime_plugin.EventListener):
 
     def on_activated_async(self, view):
         global cache
+        global settings
+        settings = sublime.load_settings('SyncedSidebarBg.sublime-settings')
         scheme_file = view.settings().get('color_scheme')
+        # print(scheme_file)
 
         # do nothing if the sheme file is not available or the same as before
         if not scheme_file or scheme_file == cache.get('color_scheme'):
             return
 
         syntax = view.settings().get('syntax')
+        # print(syntax)
 
         # do not change side bar for special syntaxes like vintagous-commandline-mode
-        if syntax and any([syntax.endswith(x) for x in settings.get("ignored_syntaxes")]):
+        if syntax and any([syntax.endswith(x) for x in settings.get("ignored_syntaxes", [])]):
             return
 
-        if any([scheme_file.endswith(x) for x in settings.get("ignored_themes")]):
+        if any([scheme_file.endswith(x) for x in settings.get("ignored_themes", [])]):
             return
 
         plist_file = plistlib.readPlistFromBytes(sublime.load_resource(scheme_file).encode('raw_unicode_escape'))
@@ -63,24 +68,27 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         # --------------------------------------
 
         def label_color(triplet):
+            global settings
             if is_light(triplet):
                 return settings.get('label_color_light')
             else:
                 return settings.get('label_color_dark')
 
         def side_bar_sep_line(bg):
+            global settings
             brightness_change = settings.get('side_bar_sep_line_brightness_change')
             if is_light(bg.lstrip('#')):
                 return rgb(color_variant(bg, -1 * brightness_change).lstrip('#'))
             else:
-                return rgb(color_variant(bg,brightness_change).lstrip('#'))
+                return rgb(color_variant(bg, brightness_change).lstrip('#'))
 
         def bg_variat(bg):
+            global settings
             """ darken/lighten sidebar by a percentage """
             if settings.get('sidebar_bg_brightness_change') == 0:
                 return rgb(bgc)
             else:
-                return rgb(color_variant(bg,settings.get('sidebar_bg_brightness_change')).lstrip('#'))
+                return rgb(color_variant(bg, settings.get('sidebar_bg_brightness_change')).lstrip('#'))
 
         template = [
             {
@@ -120,3 +128,9 @@ def plugin_loaded():
     global settings
     cache = {}
     settings = sublime.load_settings('SyncedSidebarBg.sublime-settings')
+
+
+def plugin_unloaded():
+    artifacts = path.join(sublime.packages_path(), "User", "*.sublime-theme")
+    for f in glob.glob(artifacts):
+        remove(f)
