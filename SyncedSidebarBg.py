@@ -14,20 +14,13 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         global settings
         settings = sublime.load_settings('SyncedSidebarBg.sublime-settings')
         scheme_file = view.settings().get('color_scheme')
-        # print(scheme_file)
+
+        # do nothing if it's a widget
+        if view.settings().get('is_widget'):
+            return
 
         # do nothing if the sheme file is not available or the same as before
         if not scheme_file or scheme_file == cache.get('color_scheme'):
-            return
-
-        syntax = view.settings().get('syntax')
-        # print(syntax)
-
-        # do not change side bar for special syntaxes like vintagous-commandline-mode
-        if syntax and any([syntax.endswith(x) for x in settings.get("ignored_syntaxes", [])]):
-            return
-
-        if any([scheme_file.endswith(x) for x in settings.get("ignored_themes", [])]):
             return
 
         plist_file = plistlib.readPlistFromBytes(sublime.load_resource(scheme_file).encode('raw_unicode_escape'))
