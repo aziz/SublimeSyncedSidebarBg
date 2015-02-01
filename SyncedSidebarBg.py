@@ -25,7 +25,10 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
 
         plist_file = plistlib.readPlistFromBytes(sublime.load_resource(scheme_file).encode('raw_unicode_escape'))
         global_settings = [i["settings"] for i in plist_file["settings"] if i["settings"].get("lineHighlight")]
-        color_settings = global_settings[0]
+        color_settings = global_settings and global_settings[0]
+
+        if not color_settings:
+            return
 
         bg = color_settings.get("background", '#FFFFFF')
         fg = color_settings.get("foreground", '#000000')
