@@ -1,6 +1,6 @@
 {
-  "sidebar_bg_brightness_change": 0,
-  "side_bar_sep_line_brightness_change": 50,
-  "label_color_light": [30, 30, 30],
-  "label_color_dark": [220, 220, 220]
+  "sidebar_bg_brightness_change": -30,
+  "side_bar_sep_line_brightness_change": 60,
+  "label_color_light": [50, 50, 50],
+  "label_color_dark": [200, 200, 200]
 }

@@ -70,9 +70,8 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             else:
                 return settings.get('label_color_dark')
 
-        def side_bar_sep_line(bg):
+        def side_bar_sep_line(bg, brightness_change = settings.get('side_bar_sep_line_brightness_change')):
             global settings
-            brightness_change = settings.get('side_bar_sep_line_brightness_change')
             if is_light(bg.lstrip('#')):
                 return rgb(color_variant(bg, -1 * brightness_change).lstrip('#'))
             else:
@@ -110,7 +109,25 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             {
                 "class": "sidebar_heading",
                 "shadow_offset": [0, 0]
+            },
+            {
+                "class": "disclosure_button_control",
+                "layer0.tint": side_bar_sep_line(bg),
+                "layer1.tint": side_bar_sep_line(bg)
+            },
+            {
+                "class": "sidebar_heading",
+                "color": side_bar_sep_line(bg, 90),
             }
+            # {
+            #     "class": "icon_file_type",
+            #     "layer0.tint": side_bar_sep_line(bg),
+            # },
+            # {
+            #     "class": "icon_folder",
+            #     "layer0.tint": side_bar_sep_line(bg)
+            # },
+
         ]
 
         json_str = json.dumps(template, sort_keys=True, indent=4, separators=(',', ': ')).encode('raw_unicode_escape')
