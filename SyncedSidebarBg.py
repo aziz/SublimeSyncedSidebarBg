@@ -7,6 +7,7 @@ import plistlib
 import glob
 from os import path, remove
 
+
 class SidebarMatchColorScheme(sublime_plugin.EventListener):
 
     def on_activated_async(self, view):
@@ -33,19 +34,19 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         bg = color_settings.get("background", '#FFFFFF')
         fg = color_settings.get("foreground", '#000000')
         bgc = bg.lstrip('#')
-        cache = {"bg": bg, "fg": fg, "color_scheme": scheme_file }
+        cache = {"bg": bg, "fg": fg, "color_scheme": scheme_file}
 
         # -- COLOR ------------------------------
 
         _NUMERALS = '0123456789abcdefABCDEF'
-        _HEXDEC = {v: int(v, 16) for v in (x+y for x in _NUMERALS for y in _NUMERALS)}
+        _HEXDEC = {v: int(v, 16) for v in (x + y for x in _NUMERALS for y in _NUMERALS)}
 
         def rgb(triplet):
             return _HEXDEC[triplet[0:2]], _HEXDEC[triplet[2:4]], _HEXDEC[triplet[4:6]]
 
         def is_light(triplet):
             r, g, b = _HEXDEC[triplet[0:2]], _HEXDEC[triplet[2:4]], _HEXDEC[triplet[4:6]]
-            yiq = ((r*299)+(g*587)+(b*114))/1000;
+            yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
             return yiq >= 128
 
         def color_variant(hex_color, brightness_offset=1):
@@ -56,21 +57,20 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
                 print("=> Reformatted as %s " % hex_color)
             if len(hex_color) != 7:
                 raise Exception("Passed %s into color_variant(), needs to be in #87c95f format." % hex_color)
-            rgb_hex = [hex_color[x:x+2] for x in [1, 3, 5]]
+            rgb_hex = [hex_color[x:x + 2] for x in [1, 3, 5]]
             new_rgb_int = [int(hex_value, 16) + brightness_offset for hex_value in rgb_hex]
-            new_rgb_int = [min([255, max([0, i])]) for i in new_rgb_int] # make sure new values are between 0 and 255
+            new_rgb_int = [min([255, max([0, i])]) for i in new_rgb_int]  # make sure new values are between 0 and 255
             return "#%02x%02x%02x" % tuple(new_rgb_int)
 
         # --------------------------------------
 
         def label_color(triplet):
-            global settings
             if is_light(triplet):
                 return settings.get('label_color_light')
             else:
                 return settings.get('label_color_dark')
 
-        def side_bar_sep_line(bg, brightness_change = settings.get('side_bar_sep_line_brightness_change')):
+        def side_bar_sep_line(bg, brightness_change=settings.get('side_bar_sep_line_brightness_change')):
             global settings
             if is_light(bg.lstrip('#')):
                 return rgb(color_variant(bg, -1 * brightness_change).lstrip('#'))
@@ -79,7 +79,6 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
 
         def bg_variat(bg):
             global settings
-            """ darken/lighten sidebar by a percentage """
             if settings.get('sidebar_bg_brightness_change') == 0:
                 return rgb(bgc)
             else:
@@ -119,15 +118,6 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
                 "class": "sidebar_heading",
                 "color": side_bar_sep_line(bg, 90),
             }
-            # {
-            #     "class": "icon_file_type",
-            #     "layer0.tint": side_bar_sep_line(bg),
-            # },
-            # {
-            #     "class": "icon_folder",
-            #     "layer0.tint": side_bar_sep_line(bg)
-            # },
-
         ]
 
         json_str = json.dumps(template, sort_keys=True, indent=4, separators=(',', ': ')).encode('raw_unicode_escape')
