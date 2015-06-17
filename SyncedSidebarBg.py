@@ -77,6 +77,14 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             else:
                 return rgb(color_variant(bg, brightness_change).lstrip('#'))
 
+        def disclosure_color(bg):
+            global settings
+            if is_light(bg.lstrip('#')):
+                return rgb(color_variant(bg, -100).lstrip('#'))
+            else:
+                return rgb(color_variant(bg, 100).lstrip('#'))
+
+
         def bg_variat(bg):
             global settings
             if settings.get('sidebar_bg_brightness_change') == 0:
@@ -87,7 +95,6 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         template = [
             {
                 "class": "tree_row",
-                "layer0.texture": "Theme - Default/row_highlight_dark.png",
                 "layer0.tint": side_bar_sep_line(bg),
             },
             {
@@ -109,17 +116,19 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
                 "class": "sidebar_heading",
                 "shadow_offset": [0, 0]
             },
-            # {
-            #     "class": "disclosure_button_control",
-            #     "layer0.tint": label_color(bgc),
-            #     "layer1.tint": label_color(bgc),
-            #     "layer0.opacity": 0.5,
-            # },
+            {
+                "class": "disclosure_button_control",
+                "layer0.tint": label_color(bgc),
+                "layer1.tint": label_color(bgc),
+            },
             {
                 "class": "icon_file_type",
                 "layer0.tint": label_color(bgc),
             },
-
+            {
+                "class": "icon_folder",
+                "layer0.tint": side_bar_sep_line(bg, 90),
+            },
             {
                 "class": "sidebar_heading",
                 "color": side_bar_sep_line(bg, 90),
