@@ -109,11 +109,17 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
                 "class": "sidebar_heading",
                 "shadow_offset": [0, 0]
             },
+            # {
+            #     "class": "disclosure_button_control",
+            #     "layer0.tint": label_color(bgc),
+            #     "layer1.tint": label_color(bgc),
+            #     "layer0.opacity": 0.5,
+            # },
             {
-                "class": "disclosure_button_control",
-                "layer0.tint": side_bar_sep_line(bg),
-                "layer1.tint": side_bar_sep_line(bg)
+                "class": "icon_file_type",
+                "layer0.tint": label_color(bgc),
             },
+
             {
                 "class": "sidebar_heading",
                 "color": side_bar_sep_line(bg, 90),
