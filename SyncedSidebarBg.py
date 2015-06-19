@@ -73,7 +73,7 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         def side_bar_sep_line(bg, brightness_change=settings.get('side_bar_sep_line_brightness_change')):
             global settings
             if is_light(bg.lstrip('#')):
-                return rgb(color_variant(bg, -1 * brightness_change).lstrip('#'))
+                return rgb(color_variant(bg, -1.4 * brightness_change).lstrip('#'))
             else:
                 return rgb(color_variant(bg, brightness_change).lstrip('#'))
 
@@ -118,12 +118,28 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             },
             {
                 "class": "disclosure_button_control",
-                "layer0.tint": label_color(bgc),
-                "layer1.tint": label_color(bgc),
+                "layer0.tint": side_bar_sep_line(bg, 90),
+                "layer1.tint": side_bar_sep_line(bg, 90),
             },
             {
+                "class": "scroll_tabs_left_button",
+                "layer0.tint": side_bar_sep_line(bg, 120),
+                "layer1.tint": side_bar_sep_line(bg, 120)
+            },
+            {
+                "class": "scroll_tabs_right_button",
+                "layer0.tint": side_bar_sep_line(bg, 120),
+                "layer1.tint": side_bar_sep_line(bg, 120)
+            },
+            {
+                "class": "show_tabs_dropdown_button",
+                "layer0.tint": side_bar_sep_line(bg, 120),
+                "layer1.tint": side_bar_sep_line(bg, 120)
+            },
+
+            {
                 "class": "icon_file_type",
-                "layer0.tint": label_color(bgc),
+                "layer0.tint": side_bar_sep_line(bg, 120),
             },
             {
                 "class": "icon_folder",
