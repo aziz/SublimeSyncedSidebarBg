@@ -2,10 +2,11 @@
 # -*- coding: utf-8 -*-
 
 import sublime, sublime_plugin
-import codecs, json
-import plistlib
-import glob
+import codecs, json, plistlib, glob
 from os import path, remove
+
+cache = None
+settings = None
 
 
 class SidebarMatchColorScheme(sublime_plugin.EventListener):
@@ -14,13 +15,14 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         global cache
         global settings
         settings = sublime.load_settings('SyncedSidebarBg.sublime-settings')
-        scheme_file = view.settings().get('color_scheme')
 
         # do nothing if it's a widget
         if view.settings().get('is_widget'):
             return
 
-        # do nothing if the sheme file is not available or the same as before
+        scheme_file = view.settings().get('color_scheme')
+
+        # do nothing if the scheme file is not available or the same as before
         if not scheme_file or scheme_file == cache.get('color_scheme'):
             return
 
@@ -49,7 +51,7 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000
             return yiq >= 128
 
-        def color_variant(hex_color, brightness_offset=1):
+        def brightness_variant(hex_color, brightness_offset=1):
             """ takes a color like #87c95f and produces a lighter or darker variant """
             if len(hex_color) == 9:
                 print("=> Passed %s into color_variant()" % hex_color)
@@ -62,44 +64,26 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             new_rgb_int = [min([255, max([0, i])]) for i in new_rgb_int]  # make sure new values are between 0 and 255
             return "#%02x%02x%02x" % tuple(new_rgb_int)
 
-        # --------------------------------------
-
-        def label_color(triplet):
-            if is_light(triplet):
-                return settings.get('label_color_light')
-            else:
-                return settings.get('label_color_dark')
-
-        def side_bar_sep_line(bg, brightness_change=settings.get('side_bar_sep_line_brightness_change')):
-            global settings
-            if is_light(bg.lstrip('#')):
-                return rgb(color_variant(bg, -1.4 * brightness_change).lstrip('#'))
-            else:
-                return rgb(color_variant(bg, brightness_change).lstrip('#'))
-
-        def disclosure_color(bg):
-            global settings
-            if is_light(bg.lstrip('#')):
-                return rgb(color_variant(bg, -100).lstrip('#'))
-            else:
-                return rgb(color_variant(bg, 100).lstrip('#'))
-
-
         def bg_variat(bg):
-            global settings
             if settings.get('sidebar_bg_brightness_change') == 0:
                 return rgb(bgc)
             else:
-                return rgb(color_variant(bg, settings.get('sidebar_bg_brightness_change')).lstrip('#'))
+                return rgb(brightness_variant(bg, settings.get('sidebar_bg_brightness_change')).lstrip('#'))
+
+        def color_variant(bg, brightness_change=settings.get('side_bar_sep_line_brightness_change')):
+            if is_light(bg.lstrip('#')):
+                return rgb(brightness_variant(bg, -1.4 * brightness_change).lstrip('#'))
+            else:
+                return rgb(brightness_variant(bg, brightness_change).lstrip('#'))
 
         template = [
             {
                 "class": "tree_row",
-                "layer0.tint": side_bar_sep_line(bg),
+                "layer0.tint": color_variant(bg),
             },
             {
                 "class": "sidebar_container",
-                "layer0.tint": side_bar_sep_line(bg),
+                "layer0.tint": color_variant(bg),
                 "layer0.opacity": 1.0,
             },
             {
@@ -110,7 +94,7 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             },
             {
                 "class": "sidebar_label",
-                "color": label_color(bgc),
+                "color": color_variant(bg, 150),
             },
             {
                 "class": "sidebar_heading",
@@ -118,40 +102,40 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             },
             {
                 "class": "disclosure_button_control",
-                "layer0.tint": side_bar_sep_line(bg, 90),
-                "layer1.tint": side_bar_sep_line(bg, 150),
+                "layer0.tint": color_variant(bg, 90),
+                "layer1.tint": color_variant(bg, 150),
             },
             {
                 "class": "fold_button_control",
-                "layer0.tint": side_bar_sep_line(bg, 90),
-                "layer1.tint": side_bar_sep_line(bg, 150)
+                "layer0.tint": color_variant(bg, 90),
+                "layer1.tint": color_variant(bg, 150)
             },
             {
                 "class": "scroll_tabs_left_button",
-                "layer0.tint": side_bar_sep_line(bg, 120),
-                "layer1.tint": side_bar_sep_line(bg, 180)
+                "layer0.tint": color_variant(bg, 120),
+                "layer1.tint": color_variant(bg, 180)
             },
             {
                 "class": "scroll_tabs_right_button",
-                "layer0.tint": side_bar_sep_line(bg, 120),
-                "layer1.tint": side_bar_sep_line(bg, 180)
+                "layer0.tint": color_variant(bg, 120),
+                "layer1.tint": color_variant(bg, 180)
             },
             {
                 "class": "show_tabs_dropdown_button",
-                "layer0.tint": side_bar_sep_line(bg, 120),
-                "layer1.tint": side_bar_sep_line(bg, 180)
+                "layer0.tint": color_variant(bg, 120),
+                "layer1.tint": color_variant(bg, 180)
             },
             {
                 "class": "icon_file_type",
-                "layer0.tint": side_bar_sep_line(bg, 120),
+                "layer0.tint": color_variant(bg, 120),
             },
             {
                 "class": "icon_folder",
-                "layer0.tint": side_bar_sep_line(bg, 90),
+                "layer0.tint": color_variant(bg, 90),
             },
             {
                 "class": "sidebar_heading",
-                "color": side_bar_sep_line(bg, 90),
+                "color": color_variant(bg, 90),
             }
         ]
 
