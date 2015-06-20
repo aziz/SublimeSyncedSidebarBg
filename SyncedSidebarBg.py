@@ -119,24 +119,28 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             {
                 "class": "disclosure_button_control",
                 "layer0.tint": side_bar_sep_line(bg, 90),
-                "layer1.tint": side_bar_sep_line(bg, 90),
+                "layer1.tint": side_bar_sep_line(bg, 150),
+            },
+            {
+                "class": "fold_button_control",
+                "layer0.tint": side_bar_sep_line(bg, 90),
+                "layer1.tint": side_bar_sep_line(bg, 150)
             },
             {
                 "class": "scroll_tabs_left_button",
                 "layer0.tint": side_bar_sep_line(bg, 120),
-                "layer1.tint": side_bar_sep_line(bg, 120)
+                "layer1.tint": side_bar_sep_line(bg, 180)
             },
             {
                 "class": "scroll_tabs_right_button",
                 "layer0.tint": side_bar_sep_line(bg, 120),
-                "layer1.tint": side_bar_sep_line(bg, 120)
+                "layer1.tint": side_bar_sep_line(bg, 180)
             },
             {
                 "class": "show_tabs_dropdown_button",
                 "layer0.tint": side_bar_sep_line(bg, 120),
-                "layer1.tint": side_bar_sep_line(bg, 120)
+                "layer1.tint": side_bar_sep_line(bg, 180)
             },
-
             {
                 "class": "icon_file_type",
                 "layer0.tint": side_bar_sep_line(bg, 120),
