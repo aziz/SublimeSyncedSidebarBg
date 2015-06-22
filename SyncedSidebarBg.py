@@ -136,6 +136,10 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             {
                 "class": "sidebar_heading",
                 "color": color_variant(bg, 90),
+            },
+            {
+                "class": "grid_layout_control",
+                "border_color": color_variant(bg, 90)
             }
         ]
 
