@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import sublime, sublime_plugin
-import codecs, json, plistlib, glob
+import codecs, json, plistlib, glob, re
 from os import path, remove
 
 cache = None
@@ -26,7 +26,9 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         if not scheme_file or scheme_file == cache.get('color_scheme'):
             return
 
-        plist_file = plistlib.readPlistFromBytes(sublime.load_resource(scheme_file).encode('raw_unicode_escape'))
+        file_content = sublime.load_resource(scheme_file)
+        removed_comments = re.sub(r"<!--.+-->", '', file_content)
+        plist_file = plistlib.readPlistFromBytes(bytes(removed_comments, 'UTF-8'))
         global_settings = [i["settings"] for i in plist_file["settings"] if i["settings"].get("lineHighlight")]
         color_settings = global_settings and global_settings[0]
 
