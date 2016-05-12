@@ -15,6 +15,9 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
         global cache
         global settings
         settings = sublime.load_settings('SyncedSidebarBg.sublime-settings')
+        # making sure we're not changing sidebar color based on focused panels
+        # like PlainNotes's jotter
+        view = view.window().active_view()
 
         # do nothing if it's a widget
         if view.settings().get('is_widget'):
@@ -96,7 +99,7 @@ class SidebarMatchColorScheme(sublime_plugin.EventListener):
             },
             {
                 "class": "sidebar_label",
-                "color": color_variant(bg, 150),
+                "color": color_variant(bg, 180),
             },
             {
                 "class": "sidebar_heading",
